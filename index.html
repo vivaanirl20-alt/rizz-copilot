@@ -1,0 +1,209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>RIZZ//COPILOT 🦇</title>
+<style>
+*{box-sizing:border-box}
+body{
+ margin:0;background:#08090d;color:#f5f5f7;
+ font-family:system-ui,-apple-system,sans-serif;
+}
+.app{max-width:600px;margin:auto;padding:20px}
+h1{font-size:28px;margin:8px 0}
+.sub{color:#8d91a0;margin-bottom:22px}
+.card{
+ background:#11131a;border:1px solid #272a35;
+ border-radius:20px;padding:18px;margin-bottom:16px
+}
+textarea{
+ width:100%;min-height:150px;background:#0b0c11;
+ color:white;border:1px solid #30333e;border-radius:14px;
+ padding:14px;font-size:15px;resize:vertical
+}
+button{
+ border:0;border-radius:12px;padding:12px 16px;
+ background:#f1f1f1;color:#08090d;font-weight:700;
+ margin:7px 5px 0 0;cursor:pointer
+}
+button.dark{background:#20232d;color:white}
+button.active{background:#8b5cf6;color:white}
+.vibes{display:flex;flex-wrap:wrap;gap:4px}
+.reply{
+ background:#191b24;border:1px solid #30333e;
+ border-radius:14px;padding:14px;margin-top:10px;
+ cursor:pointer
+}
+.badge{
+ display:inline-block;padding:6px 10px;border-radius:20px;
+ background:#20232d;margin-top:10px;font-size:13px
+}
+.small{font-size:13px;color:#888d9b}
+</style>
+</head>
+
+<body>
+<div class="app">
+
+<h1>RIZZ//COPILOT 🦇</h1>
+<div class="sub">Bro, don't overthink it. Read the vibe.</div>
+
+<div class="card">
+<h3>💬 Conversation</h3>
+<textarea id="chat" placeholder="Paste the conversation here..."></textarea>
+
+<h3>🎭 Vibe</h3>
+<div class="vibes">
+<button class="active" onclick="setVibe(this,'Natural')">Natural</button>
+<button onclick="setVibe(this,'Chill')">Chill</button>
+<button onclick="setVibe(this,'Funny')">Funny</button>
+<button onclick="setVibe(this,'Teasing')">Teasing</button>
+<button onclick="setVibe(this,'Mysterious')">Mysterious</button>
+<button onclick="setVibe(this,'Mature')">Mature</button>
+<button onclick="setVibe(this,'Playful')">Playful</button>
+</div>
+
+<br>
+<button onclick="analyze()">⚡ Analyze & Suggest</button>
+</div>
+
+<div class="card" id="result" style="display:none">
+<h3>🧠 Vibe Check</h3>
+<div id="analysis"></div>
+
+<h3>💬 Suggested Replies</h3>
+<div id="replies"></div>
+</div>
+
+<div class="card">
+<h3>🧬 Human Check</h3>
+<div class="small">
+This is a simple writing heuristic, not a real AI detector.
+</div>
+<div id="humanScore" class="badge">Paste a conversation first</div>
+<br>
+<button class="dark" onclick="humanize()">✨ Humanize Again</button>
+</div>
+
+</div>
+
+<script>
+let vibe="Natural";
+
+function setVibe(btn,v){
+ vibe=v;
+ document.querySelectorAll(".vibes button")
+ .forEach(b=>b.classList.remove("active"));
+ btn.classList.add("active");
+}
+
+function analyze(){
+ const chat=document.getElementById("chat").value.trim();
+ if(!chat){
+  alert("Pehle conversation paste karo 😭");
+  return;
+ }
+
+ document.getElementById("result").style.display="block";
+
+ let lower=chat.toLowerCase();
+ let mood="Neutral";
+ let replies=[];
+
+ if(lower.includes("?")){
+   mood="They seem engaged / asking something";
+ }else if(lower.includes("haha")||lower.includes("lol")||lower.includes("😂")){
+   mood="Light & playful";
+ }else if(lower.includes("hmm")||lower.includes("ok")||lower.includes("acha")){
+   mood="Low-energy / uncertain";
+ }
+
+ if(vibe==="Funny"){
+  replies=[
+   "Okayyy, that was unexpectedly funny 😭",
+   "I wasn't prepared for that answer 😂",
+   "You really chose chaos today huh"
+  ];
+ }else if(vibe==="Teasing"){
+  replies=[
+   "Hmm… that's an interesting answer 👀",
+   "I'll let you think you won that one 😌",
+   "Okay, I'll pretend I believe you 😂"
+  ];
+ }else if(vibe==="Mysterious"){
+  replies=[
+   "Maybe. I'm not giving away everything that easily.",
+   "Interesting… I'll keep that in mind.",
+   "There's probably more to that story 👀"
+  ];
+ }else if(vibe==="Mature"){
+  replies=[
+   "Fair enough, I get what you mean.",
+   "Yeah, that actually makes sense.",
+   "I appreciate the honesty."
+  ];
+ }else if(vibe==="Playful"){
+  replies=[
+   "Okay okay, I see the energy 😂",
+   "Now that's a response I can work with.",
+   "You make this conversation unnecessarily interesting 😭"
+  ];
+ }else if(vibe==="Chill"){
+  replies=[
+   "Haha yeah, fair.",
+   "Honestly, same 😂",
+   "Yeah, I get you."
+  ];
+ }else{
+  replies=[
+   "Haha, fair enough 😭",
+   "Okay, I get what you mean.",
+   "Interesting… tell me more."
+  ];
+ }
+
+ document.getElementById("analysis").innerHTML=
+ `<span class="badge">${mood}</span>
+  <p class="small">Vibe selected: ${vibe}</p>`;
+
+ document.getElementById("replies").innerHTML=
+ replies.map(r=>`<div class="reply" onclick="copyReply(this)">${r}</div>`).join("");
+
+ updateHuman(chat);
+}
+
+function updateHuman(text){
+ let score=80;
+
+ if(text.length<20) score-=20;
+ if((text.match(/!/g)||[]).length>4) score-=10;
+ if((text.match(/😂|😭|🤣/g)||[]).length>6) score-=10;
+
+ score=Math.max(20,Math.min(95,score));
+
+ document.getElementById("humanScore").textContent=
+ score>=70 ? "🟢 Human-looking writing"
+ : score>=45 ? "🟡 Slightly AI-ish"
+ : "🔴 Very polished / AI-ish";
+}
+
+function humanize(){
+ const chat=document.getElementById("chat").value.trim();
+ if(!chat){
+  alert("Pehle conversation paste karo 😭");
+  return;
+ }
+ document.getElementById("humanScore").textContent=
+ "🟢 More natural — short, casual & conversational";
+}
+
+function copyReply(el){
+ navigator.clipboard?.writeText(el.innerText);
+ el.innerText="✓ Copied";
+ setTimeout(()=>location.reload(),500);
+}
+</script>
+
+</body>
+</html>
